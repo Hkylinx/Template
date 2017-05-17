@@ -1,0 +1,9 @@
+（可负）
+#define _(d) while(d((ch=getchar()-48)>=0))
+int g(){char ch;bool f=0;_(!)if(ch==-3)f=1;int v=ch;_()v=v*10+ch;return f?-v:v;}
+
+（不可手输）
+#define getc() (xS==xT&&(xT=(xS=xB)+fread(xB,1,1<<15,stdin),xS==xT)?0:*xS++)
+#define _(d) while(d((ch=getc()-48)>=0))
+char xB[1<<15],*xS=xB,*xT=xB;
+int get(){char ch;_(!);int v=ch;_() v=(v<<1)+(v<<3)+ch;return v;}
