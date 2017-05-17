@@ -1,0 +1,49 @@
+#include<cstdio>
+using namespace std;
+const int N=1005; const int M=1e5+5;
+int n,m,scc,id[N*2],tt,top,stk[N*2],dfn[M*4],low[N*2];
+int ecnt,adj[N*2],nxt[M*4],go[M*4]; bool ins[N*2],flag;
+int neg(int x){	return x<=n? x+n: x-n;}
+void addedge(int u,int v){	nxt[++ecnt]=adj[u], adj[u]=ecnt, go[ecnt]=v;}
+void Tarjan(int u){
+	dfn[u]=low[u]=++tt;
+	ins[u]=1, stk[++top]=u;
+	for(int e=adj[u],v;e;e=nxt[e]){
+		if(!dfn[v=go[e]]){
+			Tarjan(v);
+			if(low[v]<low[u]) low[u]=low[v];
+		}
+		else if(ins[v]&& dfn[v]<low[u]) low[u]=dfn[v];
+	}
+	if(dfn[u]==low[u]){
+		id[u]=++scc,ins[u]=0;
+		for(int v;v=stk[top--],v!=u;) id[v]=scc, ins [v]=0;
+	}
+}
+void init(){
+	ecnt=scc=tt=0; flag=1;
+	for(int i=1;i<=n*2;++i) dfn[i]=adj[i]=0;
+}
+void buildgraph(){
+	int u,v; char a,b;
+	for(int i=1;i<=m;++i){
+		scanf("%d%c%d%c",&u,&a,&v,&b);
+		++u,++v; if(a=='h') u+=n; if(b=='h') v+=n;
+		addedge(u,neg(v)); addedge(v,neg(u));
+	}
+	addedge(1,1+n);
+}
+int main(){
+	for(;scanf("%d%d",&n,&m),n>0||m>0;){
+		init(); buildgraph();
+		for(int i=1;i<=n*2;++i) if(!dfn[i]) Tarjan(i);
+		for(int i=1;i<=n&& flag;++i) if(id[i]==id[i+n]) flag=0;
+		
+		if(!flag) puts("bad luck");
+		else 
+		  for(int i=2;i<=n;++i)
+		    printf("%d%c%c",i-1,(id[i]>id[i+n])? 'w': 'h'," \n"[i==n]);
+		if(n<2) printf("\n");
+	}
+	return 0;
+}
