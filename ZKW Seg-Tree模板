@@ -1,0 +1,43 @@
+#include<cstdio>
+#include<cstring>
+#include<algorithm>
+using namespace std;
+const int N=2e6+4;
+int T[N<<2],M,n,m,tmp;
+#define _(d) while(d((ch=getchar()-48)>=0))
+inline int G(){char ch;bool f=0;_(!)if(ch==-3)f=1;int v=ch;_()v=v*10+ch;return f?-v:v;}
+inline diff(int x){
+	tmp=min(T[x],T[x^1]),T[x]-=tmp,T[x^1]-=tmp,T[x>>1]+=tmp;
+}
+inline void build(){
+	for(M=1;M<n+2;M<<=1); int i;
+	memset(T,0,sizeof(int)*(M<<1));
+	for(i=1;i<=n;i++) T[i+M]=G();
+	for(i=(n+M)>>1;i;i--) diff(i<<1);
+}
+inline void fix(int s,int t,int x){
+	for(s=s+M-1,t=t+M+1;s^t^1;s>>=1,t>>=1){
+		if(~s&1) T[s^1]+=x; if(t&1) T[t^1]+=x;
+		diff(s),diff(t);
+	}
+	for(;s>1;s>>=1) diff(s);
+} 
+inline int query(int s,int t){
+	int La=0,Ra=0,ans=0;
+	for(s+=M,t+=M;s^t^1;s>>=1,t>>=1){
+		La+=T[s],Ra+=T[t];
+		if(~s&1) La=min(La,T[s^1]);
+		if(t&1) Ra=min(Ra,T[t^1]);
+	}
+	for(ans=min(La,Ra);s>1;ans+=T[s>>=1]);
+	return ans; 
+}
+int main(){ int i,d,s,t;
+	for(n=G(),m=G(),build(),i=1;i<=m;i++){
+		d=G(),s=G(),t=G(); fix(s,t,-d);
+		if(query(1,n)<0){
+			printf("-1\n%d\n",i); return 0;
+		}
+	}
+	printf("0\n"); return 0;
+}
