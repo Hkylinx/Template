@@ -3,12 +3,12 @@
 #include<cstdlib>
 #include<algorithm>
 using namespace std;
-const int maxn=1e2+4;
+const int N=1e2+4;
 struct Point{
 	double x,y;
 	Point(double x=0, double y=0): x(x), y(y) {}
-}p[maxn],X;
-int n,t,T;
+}p[N],pp[N];
+int n,t,T,ans;
 typedef Point Vector; typedef Point P; typedef Vector V;
 V operator + (V a, V b){  return V(a.x+b.x, a.y+b.y); }
 V operator - (P a, P b){  return V(a.x-b.x, a.y-b.y); }
@@ -25,13 +25,6 @@ double Angle (V a, V b){ return acos(Dot(a,b)/ Length(a)/ Length(b) ); }
 double Cross (V a, V b){ return a.x*b.y-a.y*b.x; }
 double Area2 (P a,P b,P c){ return Cross(b-a,c-a); }
 
-double PolygonArea(){
-	double area=0;
-	for(int i=1;i<n-1;i++)
-		area+= Cross(p[i]-p[0], p[i+1]-p[0]);
-	return fabs(area/2);
-}
-
 bool OnSegment (P a, P l1,P l2){	return dcmp(Cross(l1-a,l2-a))==0&& dcmp(Dot(l1-a,l2-a))<0; }
 bool PointInPolygon (P a){
 	int wn=0,k,d1,d2;
@@ -39,9 +32,57 @@ bool PointInPolygon (P a){
 		if(OnSegment(a,p[i],p[(i+1)%n])) return 1;
 		k= dcmp(Cross(p[(i+1)%n]-p[i],a-p[i]));
 		d1= dcmp(p[i].y-a.y);
-		d2= dcmp(p[(i+!)%n].y-a.y);
+		d2= dcmp(p[(i+1)%n].y-a.y);
 		if(k>0&& d1<=0&& d2>0) wn++;
 		if(k<0&& d2<=0&& d1>0) wn--;
 	}
 	return wn==0;
+}
+//HalfplaneIntersection
+struct Line{
+	P p;V v; double ang;
+	Line(){}
+	Line(P p,V v):p(p),v(v){ang=atan2(v.y,v.x);}
+	friend bool operator < (Line x,Line y) {return x.ang<y.ang;}
+}l[N]; typedef Line L;
+
+bool OnLeft(L x,P y){return Cross(x.v,y-x.p)>=0;}
+P GetIntersection(L a,L b){
+	V u=a.p-b.p; double t=Cross(b.v,u)/Cross(a.v,b.v);
+	return a.p+a.v*t;
+}
+int HalfplaneIntersection(L* a,P* b){
+	sort(a,a+n); int s,t,i=1; P *p=new P[n];L *q=new L[n];
+	for(q[s=t=0]=a[0];i<n;i++){
+		for(;s<t&&!OnLeft(a[i],p[t-1]);t--);
+		for(;s<t&&!OnLeft(a[i],p[s]);s++);
+		if(q[++t]=a[i],fabs(Cross(q[t].v,q[t-1].v))<eps)
+			{if(OnLeft(q[--t],a[i].p))q[t]=a[i];}
+		if(s<t) p[t-1]=GetIntersection(q[t-1],q[t]);
+	}
+	for(;s<t&&!OnLeft(q[s],p[t-1]);t--);
+	if(t-s<=1) return 0;
+	p[t]=GetIntersection(q[t],q[s]);
+	int m=0; for(i=s;i<=t;i++)b[m++]=p[i];
+	return m;
+}
+double PolygonArea(bool &drc){
+	double area=0;
+	for(int i=1;i<n-1;i++)
+		area+= Cross(p[i]-p[0], p[i+1]-p[0]);
+	if(drc=(area<0))area=-area;
+	return area/2;
+}
+void GetLine(){
+	int i; p[n]=p[i=0]; bool drc;double area=PolygonArea(drc);
+	for(;i<n;i++)	
+			l[i]=Line(p[i],p[i+(drc^1)]-p[i+drc]);
+}
+int main(){
+	for(int i;scanf("%d",&n),n;printf("Floor #%d\nSurveillance is %s\n\n",++T,ans?"possible.":"impossible.")){
+		for(i=0;i<n;i++)
+			scanf("%lf%lf",&p[i].x,&p[i].y);
+		GetLine(); ans=HalfplaneIntersection(l,pp);
+	}
+	return 0;
 }
