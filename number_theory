@@ -1,0 +1,24 @@
+#include<bits/stdc++.h>
+using namespace std;
+const int N=1e5+4;
+
+inline int Ex_Gcd(int a,int b,int &x,int &y){
+	if(!b)return x=1,y=0,a;int z,d=Ex_Gcd(b,a%b,x,y);
+	z=y,y=x-a/b*y,x=z;	return d;
+}
+
+
+//ÇóÒ»ÔªÏßÐÔÍ¬Óà·½³Ì×é
+int n,a[N],b[N];
+inline int yyxxtyfcz(){
+	int a1=a[1],b1=b[1],a2,b2,x,y,d,i=1,tp;
+	for(;++i<=n;b1+=a1*x,a1*=a2){
+		a2=a[i],b2=b[i],d=Ex_Gcd(a1,a2,x,y);
+		if((tp=b2-b1)%d)return -1;
+		y=a1/d,a2/=d,tp/=d,x=(tp*x%a2+a2)%a2;
+	}
+	return b1;
+}
+
+
+
