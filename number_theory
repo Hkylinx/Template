@@ -19,6 +19,27 @@ inline int yyxxtyfcz(){
 	}
 	return b1;
 }
+//Euler
+LL Euler(LL x){
+	if(x==1)return 1;	LL i=2,a=x;
+	for(;i*i<=x;i++)if(!(x%i))
+		for(a=a/i*(i-1);!(x%i);)x/=i;
+	if(x>1)a=a/x*(x-1);	return a;
+}
+
+LL n,m,tot,ans,p[N],phi[N];	bool np[N];
+void Phi(){
+	for(LL i=2,j,k;i<N;i++){
+		if(!np[i])p[++tot]=i,phi[i]=i-1;
+		for(j=1;j<=tot&&i*p[j]<N;j++){
+			np[k=i*p[j]]=1;
+			if(i%p[j]==0){phi[k]=phi[i]*p[j];break;}
+			phi[k]=phi[i]*(p[j]-1);
+		}
+		
+	}
+	
+}
 
 
 
