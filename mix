@@ -1,0 +1,53 @@
+#include<cstdio>
+using namespace std;
+const int N=1e5+4;	
+//Ö÷Ï¯Ê÷ 
+int t[N<<2],ls[N<<2],rs[N<<2],cnt;
+inline void I(int x,int &y,int l,int r,int v){
+	y=++cnt;	t[y]=t[x]+1;	
+	ls[y]=ls[x];	rs[y]=rs[y];	
+	if(l==r)return ;	int md=(l+r)>>1;
+	v>md?I(rs[x],rs[y],md+1,r,v):I(ls[x],ls[y],l,md,v);
+}
+inline int A(int x,int y,int l,int r,int k){
+	if(l==r)return l;	int md=(l+r)>>1,	tp=t[y]-t[x];
+	if(tp>k)A(rs[x],rs[y],md+1,r,k-tp);
+	else A(ls[x],ls[y],l,md,k); 
+}
+//¶þ·Ö
+inline int Erfen(int a[],int n,int k){
+	int l=1,r=n,md;
+	for(;l<=r;)	k<a[md=(l+r)>>1]?r=md-1:l=md+1;
+	return l<=n?l:-1;
+}
+
+
+//Tarjan
+bool in[N];	int st[N],top,ans;
+int n,dfn[N],low[N],cnt,m,cl[N];
+int hd[N],ex[N<<1],ed[N<<1];
+inline int Tarjan(int x){
+	dfn[x]=low[x]=++cnt;
+	in[x]=1,st[++top]=x;
+	for(int i=hd[x],j;i;i=nx[i]){
+		if(!dfn[j=ed[i]]){
+			Tarjan(j);	low[x]=min(low[x],low[tp]);
+		}
+		else if(in[j])low[x]=min(low[x],dfn[j]);
+	}
+	if(dfn[x]==low[x]){
+		in[x]=0,cl[x]=++ans;
+		for(int i;st[top]!=x;in[i]=0)
+			cl[i=st[top--]]=ans;
+		top--;
+	}
+} 
+
+int main(){
+	int n,a[10],v,i=1;
+	for(scanf("%d",&n);i<=n;i++)
+		scanf("%d",a+i);
+	scanf("%d",&v);
+	printf("%d",Erfen(a,n,v));
+	return 0;
+}
