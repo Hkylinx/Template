@@ -1,7 +1,7 @@
 #include<cstdio>
 using namespace std;
 const int N=1e5+4;	
-//Ö÷Ï¯Ê÷ 
+//xianduanshu
 int t[N<<2],ls[N<<2],rs[N<<2],cnt;
 inline void I(int x,int &y,int l,int r,int v){
 	y=++cnt;	t[y]=t[x]+1;	
@@ -14,7 +14,7 @@ inline int A(int x,int y,int l,int r,int k){
 	if(tp>k)A(rs[x],rs[y],md+1,r,k-tp);
 	else A(ls[x],ls[y],l,md,k); 
 }
-//¶þ·Ö
+//erfen
 inline int Erfen(int a[],int n,int k){
 	int l=1,r=n,md;
 	for(;l<=r;)	k<a[md=(l+r)>>1]?r=md-1:l=md+1;
